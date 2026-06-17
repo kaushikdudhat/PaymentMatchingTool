@@ -1,0 +1,267 @@
+<div class="page-container">
+
+  <!-- ── PAGE HEADER ── -->
+  <header class="page-header">
+    <h1 class="page-title">Payments Matching</h1>
+    <p class="page-subtitle">
+      Upload internal system and payment provider CSV files to compare and reconcile payments.
+    </p>
+  </header>
+
+  <mat-divider></mat-divider>
+
+  <!-- ══════════════════════════════════════════
+       SECTION 1 - UPLOAD
+  ══════════════════════════════════════════ -->
+  <section class="section">
+    <h2 class="section-title">
+      <mat-icon class="section-icon">upload_file</mat-icon>
+      Upload Files
+    </h2>
+
+    <div class="upload-grid">
+
+      <!-- System CSV -->
+      <div class="upload-field">
+        <label class="upload-label">System CSV <span class="required">*</span></label>
+        <div class="file-row">
+          <button mat-stroked-button type="button" (click)="systemInput.click()">
+            <mat-icon>attach_file</mat-icon>
+            Choose File
+          </button>
+          <span class="file-name" [class.selected]="systemFile">
+            {{ systemFile ? systemFile.name : 'No file selected' }}
+          </span>
+        </div>
+        <input #systemInput type="file" accept=".csv"
+               (change)="onSystemFileChange($event)" hidden />
+        @if (submitted && !systemFile) {
+          <span class="field-error">System CSV file is required.</span>
+        }
+      </div>
+
+      <!-- Provider CSV -->
+      <div class="upload-field">
+        <label class="upload-label">Provider CSV <span class="required">*</span></label>
+        <div class="file-row">
+          <button mat-stroked-button type="button" (click)="providerInput.click()">
+            <mat-icon>attach_file</mat-icon>
+            Choose File
+          </button>
+          <span class="file-name" [class.selected]="providerFile">
+            {{ providerFile ? providerFile.name : 'No file selected' }}
+          </span>
+        </div>
+        <input #providerInput type="file" accept=".csv"
+               (change)="onProviderFileChange($event)" hidden />
+        @if (submitted && !providerFile) {
+          <span class="field-error">Provider CSV file is required.</span>
+        }
+      </div>
+
+    </div>
+
+    <div class="upload-actions">
+      <button mat-raised-button color="primary"
+              (click)="runMatch()"
+              [disabled]="isRunning">
+        <mat-icon *ngIf="!isRunning">sync</mat-icon>
+        <span *ngIf="!isRunning">Run Match</span>
+        <mat-spinner *ngIf="isRunning" diameter="18" class="btn-spinner"></mat-spinner>
+        <span *ngIf="isRunning">Running...</span>
+      </button>
+    </div>
+  </section>
+
+  <mat-divider></mat-divider>
+
+  <!-- ══════════════════════════════════════════
+       SECTION 2 - SUMMARY CARDS
+  ══════════════════════════════════════════ -->
+  @if (summary) {
+    <section class="section">
+      <h2 class="section-title">
+        <mat-icon class="section-icon">bar_chart</mat-icon>
+        Summary
+      </h2>
+
+      <div class="summary-grid">
+
+        <mat-card class="summary-card total">
+          <mat-card-content>
+            <div class="card-value">{{ summary.total }}</div>
+            <div class="card-label">Total</div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="summary-card matched">
+          <mat-card-content>
+            <div class="card-value">{{ summary.matched }}</div>
+            <div class="card-label">Matched</div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="summary-card system">
+          <mat-card-content>
+            <div class="card-value">{{ summary.onlySystem }}</div>
+            <div class="card-label">Only System</div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="summary-card provider">
+          <mat-card-content>
+            <div class="card-value">{{ summary.onlyProvider }}</div>
+            <div class="card-label">Only Provider</div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="summary-card mismatch">
+          <mat-card-content>
+            <div class="card-value">{{ summary.amountMismatch }}</div>
+            <div class="card-label">Amount Mismatch</div>
+          </mat-card-content>
+        </mat-card>
+
+      </div>
+    </section>
+
+    <mat-divider></mat-divider>
+  }
+
+  <!-- ══════════════════════════════════════════
+       SECTION 3 - FILTER  +  SECTION 4 - TABLE
+  ══════════════════════════════════════════ -->
+  <section class="section">
+
+    <div class="results-header">
+      <h2 class="section-title no-margin">
+        <mat-icon class="section-icon">table_rows</mat-icon>
+        Results
+      </h2>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Filter</mat-label>
+        <mat-select [value]="selectedFilter"
+                    (selectionChange)="onFilterChange($event.value)">
+          @for (opt of filterOptions; track opt.value) {
+            <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Loading -->
+    @if (isLoading) {
+      <div class="center-content">
+        <mat-spinner diameter="48"></mat-spinner>
+      </div>
+    }
+
+    <!-- Empty state -->
+    @if (!isLoading && results.length === 0) {
+      <div class="empty-state">
+        <mat-icon>inbox</mat-icon>
+        <p>No results found. Upload both CSV files and click <strong>Run Match</strong>.</p>
+      </div>
+    }
+
+    <!-- Results table -->
+    @if (!isLoading && results.length > 0) {
+      <div class="table-wrapper">
+        <table mat-table [dataSource]="results" class="results-table">
+
+          <!-- Order ID -->
+          <ng-container matColumnDef="orderId">
+            <th mat-header-cell *matHeaderCellDef>Order ID</th>
+            <td mat-cell *matCellDef="let row" class="mono">{{ row.orderId }}</td>
+          </ng-container>
+
+          <!-- System Amount -->
+          <ng-container matColumnDef="systemAmount">
+            <th mat-header-cell *matHeaderCellDef class="amount-col">System Amount</th>
+            <td mat-cell *matCellDef="let row" class="amount-col">
+              {{ row.systemAmount !== null ? (row.systemAmount | number:'1.2-2') : '-' }}
+            </td>
+          </ng-container>
+
+          <!-- Provider Amount -->
+          <ng-container matColumnDef="providerAmount">
+            <th mat-header-cell *matHeaderCellDef class="amount-col">Provider Amount</th>
+            <td mat-cell *matCellDef="let row" class="amount-col">
+              {{ row.providerAmount !== null ? (row.providerAmount | number:'1.2-2') : '-' }}
+            </td>
+          </ng-container>
+
+          <!-- Currency -->
+          <ng-container matColumnDef="currency">
+            <th mat-header-cell *matHeaderCellDef>Currency</th>
+            <td mat-cell *matCellDef="let row">{{ row.currency }}</td>
+          </ng-container>
+
+          <!-- Status -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let row">
+              <span class="status-badge" [ngClass]="getStatusClass(row.status)">
+                {{ row.status }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Resolved -->
+          <ng-container matColumnDef="isResolved">
+            <th mat-header-cell *matHeaderCellDef>Resolved</th>
+            <td mat-cell *matCellDef="let row">
+              <mat-icon [class]="row.isResolved ? 'icon-yes' : 'icon-no'">
+                {{ row.isResolved ? 'check_circle' : 'radio_button_unchecked' }}
+              </mat-icon>
+            </td>
+          </ng-container>
+
+          <!-- Resolution Side -->
+          <ng-container matColumnDef="resolutionSide">
+            <th mat-header-cell *matHeaderCellDef>Resolution Side</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.resolutionSide ?? '-' }}
+            </td>
+          </ng-container>
+
+          <!-- Actions -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let row">
+              @if (canResolve(row)) {
+                <div class="action-btns">
+                  <button mat-stroked-button color="primary"
+                          (click)="resolve(row, 'SYSTEM')"
+                          matTooltip="Accept system amount as correct">
+                    Accept System
+                  </button>
+                  <button mat-stroked-button color="accent"
+                          (click)="resolve(row, 'PROVIDER')"
+                          matTooltip="Accept provider amount as correct">
+                    Accept Provider
+                  </button>
+                </div>
+              } @else if (row.isResolved) {
+                <span class="label-resolved">
+                  <mat-icon class="icon-inline">check</mat-icon>
+                  Resolved
+                </span>
+              } @else {
+                <span class="label-na">N/A</span>
+              }
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+              [class.row-resolved]="row.isResolved"></tr>
+
+        </table>
+      </div>
+    }
+
+  </section>
+
+</div>

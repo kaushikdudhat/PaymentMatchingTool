@@ -1,0 +1,25 @@
+/* Global styles — Material theme is loaded via angular.json */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background-color: #f4f6f9;
+  color: #333;
+}
+
+/* Snackbar theming (MDC-based Angular Material 17) */
+.success-snack {
+  --mdc-snackbar-container-color: #43a047;
+  --mdc-snackbar-supporting-text-color: #fff;
+  --mat-snack-bar-button-color: #fff;
+}
+
+.error-snack {
+  --mdc-snackbar-container-color: #e53935;
+  --mdc-snackbar-supporting-text-color: #fff;
+  --mat-snack-bar-button-color: #fff;
+}

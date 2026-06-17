@@ -1,0 +1,294 @@
+.page-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 24px;
+
+  @media (max-width: 600px) {
+    padding: 16px;
+  }
+}
+
+/* ── Header ── */
+.page-header {
+  margin-bottom: 28px;
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 600;
+  margin: 0 0 6px;
+  color: #1a237e;
+}
+
+.page-subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+/* ── Section ── */
+.section {
+  padding: 28px 0;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 17px;
+  font-weight: 500;
+  margin: 0 0 20px;
+  color: #333;
+
+  &.no-margin {
+    margin-bottom: 0;
+  }
+}
+
+.section-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: #3f51b5;
+}
+
+/* ── Upload ── */
+.upload-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+
+  @media (max-width: 680px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.upload-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.upload-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+
+  .required {
+    color: #e53935;
+  }
+}
+
+.file-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.file-name {
+  font-size: 13px;
+  color: #999;
+  font-style: italic;
+
+  &.selected {
+    color: #333;
+    font-style: normal;
+    font-weight: 500;
+  }
+}
+
+.field-error {
+  font-size: 12px;
+  color: #e53935;
+}
+
+.upload-actions {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-spinner {
+  display: inline-block;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+/* ── Summary Cards ── */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 560px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.summary-card {
+  border-radius: 10px !important;
+  text-align: center;
+
+  mat-card-content {
+    padding: 20px 12px !important;
+  }
+
+  .card-value {
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+  }
+
+  .card-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-top: 8px;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  &.total    { background: #3f51b5; }
+  &.matched  { background: #43a047; }
+  &.system   { background: #fb8c00; }
+  &.provider { background: #8e24aa; }
+  &.mismatch { background: #e53935; }
+}
+
+/* ── Results header ── */
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.filter-field {
+  width: 170px;
+}
+
+/* ── Loading / Empty ── */
+.center-content {
+  display: flex;
+  justify-content: center;
+  padding: 56px 0;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 56px 0;
+  color: #aaa;
+  text-align: center;
+
+  mat-icon {
+    font-size: 52px;
+    width: 52px;
+    height: 52px;
+    margin-bottom: 12px;
+    color: #ccc;
+  }
+
+  p {
+    margin: 0;
+    font-size: 15px;
+  }
+}
+
+/* ── Table ── */
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.results-table {
+  width: 100%;
+  background: #fff;
+
+  th.mat-header-cell {
+    font-weight: 600;
+    color: #555;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  td.mat-cell {
+    font-size: 13px;
+    color: #333;
+  }
+
+  .mono { font-family: monospace; font-size: 13px; }
+
+  .amount-col { text-align: right; }
+
+  .row-resolved td {
+    opacity: 0.7;
+    background: #fafffe;
+  }
+}
+
+/* ── Status badges ── */
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+
+  &.badge-matched  { background: #e8f5e9; color: #2e7d32; }
+  &.badge-mismatch { background: #ffebee; color: #c62828; }
+  &.badge-system   { background: #fff3e0; color: #e65100; }
+  &.badge-provider { background: #f3e5f5; color: #6a1b9a; }
+}
+
+/* ── Icons ── */
+.icon-yes { color: #43a047; vertical-align: middle; }
+.icon-no  { color: #bdbdbd; vertical-align: middle; }
+
+.icon-inline {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+}
+
+/* ── Action buttons ── */
+.action-btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  button {
+    font-size: 12px;
+    line-height: 30px;
+    padding: 0 10px;
+    min-width: unset;
+  }
+}
+
+.label-resolved {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #43a047;
+  font-weight: 500;
+}
+
+.label-na {
+  font-size: 12px;
+  color: #bdbdbd;
+}
